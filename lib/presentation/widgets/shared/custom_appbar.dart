@@ -11,7 +11,7 @@ class CustomAppbar extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
           width: double.infinity,
           child: Row(
@@ -22,7 +22,7 @@ class CustomAppbar extends StatelessWidget {
               const Spacer(),
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.search),
+                icon: const Icon(Icons.search),
               )
             ],
           ),
