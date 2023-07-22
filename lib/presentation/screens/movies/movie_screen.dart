@@ -191,7 +191,8 @@ class _ActorByMovie extends ConsumerWidget {
   }
 }
 
-final isFavoriteProvider = FutureProvider.family((ref, int movieId) {
+final isFavoriteProvider =
+    FutureProvider.family.autoDispose((ref, int movieId) {
   final localStorageRepository = ref.watch(localStorageRepositoryProvider);
   return localStorageRepository.isMovieFavorite(movieId);
 });
@@ -202,7 +203,7 @@ class _CustomSliverAppbar extends ConsumerWidget {
   const _CustomSliverAppbar({required this.movie});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
 
     final size = MediaQuery.of(context).size;
@@ -213,15 +214,22 @@ class _CustomSliverAppbar extends ConsumerWidget {
       foregroundColor: Colors.white,
       actions: [
         IconButton(
-          onPressed: () {
-            ref.watch(localStorageRepositoryProvider).toggleFavorite(movie);
+          onPressed: () async {
+            //ref.read(localStorageRepositoryProvider)
+            //.toggleFavorite(movie);
+
+            await ref
+                .read(favoriteMoviesProvider.notifier)
+                .toggleFavorite(movie);
+
+            ref.invalidate(isFavoriteProvider(movie.id));
           },
           icon: isFavoriteFuture.when(
+            loading: () => const CircularProgressIndicator(strokeWidth: 2),
             data: (isFavorite) => isFavorite
                 ? const Icon(Icons.favorite_rounded, color: Colors.red)
                 : const Icon(Icons.favorite_border),
             error: (_, __) => throw UnimplementedError(),
-            loading: () => const CircularProgressIndicator(strokeWidth: 2),
           ),
         ),
       ],
